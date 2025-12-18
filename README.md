@@ -1,0 +1,39 @@
+## Ledger Bitcoin Recovery App not accepting unhardened path (Node HID)
+
+It seems like we were told that we must use the "Bitcoin Recovery App" to
+sign unhardened derivation paths.  This repository is to demonstrate that ledger
+still rejects these.
+
+This is using unhardened m/49/0/0.
+
+With a ledger nano s plus using the "Bitcoin Recovery App", run this command:
+
+```bash
+node repro.js
+
+```
+
+```text
+node repro.js
+APDU: e10000010e0103000000310000000000000000
+ERROR: Ledger device: UNKNOWN_ERROR (0x6a82)
+SW= 0x6a82
+```
+
+With speculos, run this command:
+
+```bash
+node repro-speculos.cjs
+```
+
+```text
+node repro-speculos.cjs
+APDU e105000100 -> RESP f5acc2fd9000 (sw=0x9000)
+Device master fingerprint: f5acc2fd
+APDU e1020001504f020b4465725061746854657374292d9dc1fe3a08d767863ded45d3543088086b56a6dd47877a0ec5b96ade3f51420394e89678f6b4f60263b163139863e776ceb6945ec6222f1198ec8d66998bbe65 -> RESP 40002d9dc1fe3a08d767863ded45d3543088086b56a6dd47877a0ec5b96ade3f5142e000 (sw=0xe000)
+APDU f80100002b292973682877736828736f727465646d756c746928322c40302f2a2a2c40312f2a2a2c40322f2a2a292929 -> RESP 4194e89678f6b4f60263b163139863e776ceb6945ec6222f1198ec8d66998bbe650300e000 (sw=0xe000)
+APDU f8010000628226038af4a3edd55d740c13ca5ab4b21341c1d027a65215c778d96a156e4b2a020297cc505f32aebab79f4250bdb40c96527c49ed21c93b10025a512f951af6fadc47bec978a5ef44635d94b06a99c3157a6bcc3333829c297a454b4201da78d3ad -> RESP 40008226038af4a3edd55d740c13ca5ab4b21341c1d027a65215c778d96a156e4b2ae000 (sw=0xe000)
+APDU f8010000868484005b66356163633266642f34392f302f305d78707562364467395931595638764b554a61426a575658794e59637745626a39634d7536536d6e414e51614b4b50655032714a6f6a37594c7763396636424168635273574d5536456d6746525071574136696d7766747665794159583343774442763939426a7767485441504b626b556233 -> RESP 00016a82 (sw=0x6a82)
+ERROR: Ledger device: UNKNOWN_ERROR (0x6a82)
+statusCode: 0x6a82
+```

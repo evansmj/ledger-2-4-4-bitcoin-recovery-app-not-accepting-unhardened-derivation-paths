@@ -1,0 +1,53 @@
+# dependencies
+node_modules/
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# coverage / test output
+coverage/
+*.lcov
+.nyc_output/
+
+# build output (generic)
+dist/
+build/
+out/
+
+# caches
+.cache/
+.parcel-cache/
+.eslintcache
+
+# env files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# local tooling
+.npmrc
+
+
