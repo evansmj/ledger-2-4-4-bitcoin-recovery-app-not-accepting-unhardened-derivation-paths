@@ -4,7 +4,7 @@ const ledgerBitcoin = require('ledger-bitcoin');
 const apduPort = 40000;
 const baseURL = 'http://127.0.0.1:5000';
 
-// Key #0 will be tagged with the speculos device fingerprint at runtime.
+// XPUB_A will be tagged with the speculos device fingerprint at runtime.
 const XPUB_A = 'xpub6Dg9Y1YV8vKUJaBjWVXyNYcwEbj9cMu6SmnANQaKKPeP2qJoj7YLwc9f6BAhcRsWMU6EmgFRPqWA6imwftveyAYX3CwDBv99BjwgHTAPKbkUb3';
 const XPUB_B = 'xpub6C92h9BRnATnHMEMQ1885FWavHrDJ2buQmQusSFktV9XKgyC18JcSWFPPK7RtuqFWot4UHHHa4AF5BPV25ZMzYhDMBqBk2eaPv9djqN7Atw';
 const XPUB_C = 'xpub6CFfy1RWVBSqbQkPKNiY1eipHiZUs1f4JwvaiHrK7FNGRWVqhU2SdidHkCpUevSeSUpV3WnGRVMjhgt516Yjk64Hvt6Ka8rxPQ6t6WX4VG2';
@@ -23,6 +23,8 @@ function fmtSw(sw) {
   return '0x' + sw.toString(16).padStart(4, '0');
 }
 
+
+// try to register a wallet policy
 (async () => {
   const transport = await SpeculosTransport.open({ apduPort, baseURL });
 

@@ -6,10 +6,10 @@ function u32be(n) {
   return b;
 }
 
+// this requests an xpub with unhardened derivation path m/49/0/0
 (async () => {
   const transport = await TransportNodeHid.create();
 
-  // This test requests unhardened m/49/0/0.
   const display = 1;
   const path = [49, 0, 0];
   const data = Buffer.concat([
