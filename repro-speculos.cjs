@@ -1,13 +1,12 @@
 const SpeculosTransport = require('@ledgerhq/hw-transport-node-speculos').default;
 const ledgerBitcoin = require('ledger-bitcoin');
 
-const apduPort = 40000;
+const apduPort = 9999;
 const baseURL = 'http://127.0.0.1:5000';
 
-// XPUB_A will be tagged with the speculos device fingerprint at runtime.
-const XPUB_A = 'xpub6Dg9Y1YV8vKUJaBjWVXyNYcwEbj9cMu6SmnANQaKKPeP2qJoj7YLwc9f6BAhcRsWMU6EmgFRPqWA6imwftveyAYX3CwDBv99BjwgHTAPKbkUb3';
-const XPUB_B = 'xpub6C92h9BRnATnHMEMQ1885FWavHrDJ2buQmQusSFktV9XKgyC18JcSWFPPK7RtuqFWot4UHHHa4AF5BPV25ZMzYhDMBqBk2eaPv9djqN7Atw';
-const XPUB_C = 'xpub6CFfy1RWVBSqbQkPKNiY1eipHiZUs1f4JwvaiHrK7FNGRWVqhU2SdidHkCpUevSeSUpV3WnGRVMjhgt516Yjk64Hvt6Ka8rxPQ6t6WX4VG2';
+// XPUB_A is fetched from Speculos at runtime at path m/49/0/0 (unhardened) and tagged with the device fingerprint.
+const XPUB_B = 'xpub6CM193jdoYRwyqymZiupoYJxpNRsL7HEzNz6axSbSVWf6aRKJ7i3SxX77T67zDCv4W9VKQ6tJDCjNCbgYGTrrJZoq7uYuSiBxV51fxNrfYG';
+const XPUB_C = 'xpub6DSBY13mSthGm2KCnzMnyQhMomQA58En7yWeJrbpFQqn7NtxS8iUTF6owXFeKiBU37Rh5f3q9R1miLF64NVULcpmH126upSA82mtqcLv2ac';
 
 function hex(buf) {
   return Buffer.from(buf).toString('hex');
@@ -23,7 +22,6 @@ function fmtSw(sw) {
   return '0x' + sw.toString(16).padStart(4, '0');
 }
 
-
 // try to register a wallet policy
 (async () => {
   const transport = await SpeculosTransport.open({ apduPort, baseURL });
@@ -32,7 +30,9 @@ function fmtSw(sw) {
   transport.exchange = async (apdu) => {
     const resp = await originalExchange(apdu);
     const sw = swFromResponse(resp);
-    console.log(`APDU ${hex(apdu)} -> RESP ${hex(resp)} (sw=${sw != null ? fmtSw(sw) : 'n/a'})`);
+    console.log(
+      `APDU ${hex(apdu)} -> RESP ${hex(resp)} (sw=${sw != null ? fmtSw(sw) : 'n/a'})`
+    );
     return resp;
   };
 
@@ -42,16 +42,13 @@ function fmtSw(sw) {
     const deviceFpr = await appClient.getMasterFingerprint();
     console.log('Device master fingerprint:', deviceFpr);
 
-    // Force the internal-key check to attempt derivation at unhardened m/49/0/0
-    // by matching the key origin fingerprint to the device fingerprint.
+    const deviceXpub = await appClient.getExtendedPubkey('m/49/0/0', true);
+    console.log('Device xpub (m/49/0/0):', deviceXpub);
+
     const walletPolicy = new ledgerBitcoin.WalletPolicy(
       'DerPathTest',
       'sh(wsh(sortedmulti(2,@0/**,@1/**,@2/**)))',
-      [
-        `[${deviceFpr}/49/0/0]${XPUB_A}`,
-        `[1b6531cf/49/0/0]${XPUB_B}`,
-        `[6e35d0d2/49/0/0]${XPUB_C}`,
-      ],
+      [`[${deviceFpr}/49/0/0]${deviceXpub}`, `[1b6531cf/49/0/0]${XPUB_B}`, `[6e35d0d2/49/0/0]${XPUB_C}`]
     );
 
     const [policyId, policyHmac] = await appClient.registerWallet(walletPolicy);
